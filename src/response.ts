@@ -1,5 +1,6 @@
 import { ServerResponse } from 'http'
 import * as fs from 'fs'
+import * as mime from 'mime-types'
 
 export enum HttpStatus {
     OK = 200,
@@ -24,7 +25,7 @@ export class TextResponse {
     private readonly status: HttpStatus
 
     send(res: ServerResponse) {
-        res.writeHead(this.status, { 'Content-Type': 'text/plain' })
+        res.writeHead(this.status, { 'Content-Type': 'text/plain; charset=utf-8' })
         res.end(this.text)
     }
 }
@@ -39,7 +40,7 @@ export class JSONResponse {
     private readonly status: HttpStatus
 
     send(res: ServerResponse) {
-        res.writeHead(this.status, { 'Content-Type': 'application/json' })
+        res.writeHead(this.status, { 'Content-Type': 'application/json; charset=utf-8' })
         res.end(JSON.stringify(this.obj))
     }
 }
@@ -52,13 +53,13 @@ export class FileResponse {
     private readonly path: string
 
     send(res: ServerResponse) {
-        fs.readFile(process.cwd() + this.path, function (err, data) {
+        fs.readFile(process.cwd() + this.path, (err, data) => {
             if (err) {
                 res.writeHead(404)
                 res.end('Page not found')
                 return
             }
-            res.writeHead(200)
+            res.writeHead(200, { 'Content-Type': mime.contentType(this.path.split('/').pop() || '') || 'application/octet-stream' })
             res.end(data)
         })
     }

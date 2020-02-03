@@ -16,6 +16,12 @@ app.post('/hello', async (ctx: Context) => {
     return new JSONResponse(body)
 })
 
+app.ws('/ws').on('connection', ws => {
+    ws.on('message', msg => {
+        ws.send(msg)
+    })
+})
+
 app.serve(8000)
 ```
 

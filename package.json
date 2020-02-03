@@ -1,6 +1,6 @@
 {
   "name": "jeevan",
-  "version": "0.0.0",
+  "version": "0.1.1",
   "description": "Simple web framework",
   "main": "dist/index.js",
   "scripts": {
@@ -9,7 +9,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^13.7.0"
+    "@types/mime-types": "^2.1.0",
+    "@types/node": "^13.7.0",
+    "@types/ws": "^7.2.1",
+    "mime-types": "^2.1.26",
+    "ws": "^7.2.1"
   },
   "devDependencies": {}
 }

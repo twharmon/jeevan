@@ -6,6 +6,7 @@ import Context, { PathParams } from './context'
 import { HttpStatus } from './response'
 import { Logger } from './logger'
 import Middleware, { MiddlewareHandler } from './middleware'
+import * as WebSocket from 'ws'
 
 export default class Engine {
     constructor() {
@@ -18,19 +19,8 @@ export default class Engine {
         this.headRoutes = []
         this.getRoutes = []
         this.loggers = []
-    }
 
-    private getRoutes: Route[]
-    private putRoutes: Route[]
-    private patchRoutes: Route[]
-    private postRoutes: Route[]
-    private deleteRoutes: Route[]
-    private optionsRoutes: Route[]
-    private headRoutes: Route[]
-    private readonly loggers: Logger[]
-
-    serve(port: number) {
-        const requestListener = async (req: IncomingMessage, res: ServerResponse) => {
+        this.server = http.createServer(async (req: IncomingMessage, res: ServerResponse) => {
             const u = url.parse(req.url || '')
             let routes: Route[]
             switch (req.method) {
@@ -76,18 +66,21 @@ export default class Engine {
             }
             res.writeHead(HttpStatus.NotFound)
             res.end('Page not found')
-        }
+        })
+    }
 
-        const server = http.createServer(requestListener)
-        // server.on('upgrade', (req, socket, head) => {
-        //     socket.write('HTTP/1.1 101 Web Socket Protocol Handshake\r\n' +
-        //         'Upgrade: WebSocket\r\n' +
-        //         'Connection: Upgrade\r\n' +
-        //         '\r\n')
-        //
-        //     socket.pipe(socket) // echo back
-        // })
-        server.listen(port)
+    private getRoutes: Route[]
+    private putRoutes: Route[]
+    private patchRoutes: Route[]
+    private postRoutes: Route[]
+    private deleteRoutes: Route[]
+    private optionsRoutes: Route[]
+    private headRoutes: Route[]
+    private readonly loggers: Logger[]
+    private readonly server: http.Server
+
+    serve(port: number) {
+        this.server.listen(port)
     }
 
     middleware(...middlewares: MiddlewareHandler[]) {
@@ -140,7 +133,7 @@ export default class Engine {
         this.loggers.push(logger)
     }
 
-    // ws(path: string) {
-    //
-    // }
+    ws(path: string) {
+        return new WebSocket.Server({ path, server: this.server })
+    }
 }
