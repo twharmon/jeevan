@@ -9,11 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/mime-types": "^2.1.0",
-    "@types/node": "^13.7.0",
-    "@types/ws": "^7.2.1",
-    "mime-types": "^2.1.26",
     "ws": "^7.2.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/node": "^13.7.0",
+    "@types/ws": "^7.2.1"
+  }
 }
