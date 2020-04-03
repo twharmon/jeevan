@@ -2,7 +2,7 @@
 Simple web framework.
 
 ## Usage
-```
+```typescript
 import { Context, Engine, JSONResponse } from 'jeevan'
 
 const app = new Engine()
