@@ -3,7 +3,6 @@ import * as url from 'url'
 import * as querystring from 'querystring'
 import { Logger, LogLevel } from './logger'
 
-export type UrlQuery = { [key: string]: string }
 export type PathParams = { [key: string]: string }
 
 export default class Context {
@@ -16,12 +15,10 @@ export default class Context {
     readonly request: IncomingMessage
     readonly params: PathParams
     private readonly loggers: Logger[]
-    private queryObj?: UrlQuery
 
-    query(): UrlQuery {
-        if (this.queryObj) return this.queryObj
+    query<T>(): T {
         const queryString = url.parse(this.request.url || '').query || ''
-        const query: UrlQuery = {}
+        const query: { [key: string]: any } = {}
         const queryObj = querystring.parse(queryString)
         const keys = Object.keys(queryObj)
         for (let i = keys.length - 1; i >= 0; i--) {
@@ -31,18 +28,17 @@ export default class Context {
             }
             query[keys[i]] = queryObj[keys[i]][0]
         }
-        this.queryObj = query
-        return query
+        return query as T
     }
 
-    body(): Promise<object> {
+    body<T>(): Promise<T> {
         let body = ''
         this.request.on('readable', () => {
             body += this.request.read() || ''
         })
-        return new Promise(resolve => {
+        return new Promise<T>(resolve => {
             this.request.on('end', () => {
-                resolve(JSON.parse(body))
+                resolve(JSON.parse(body) as T)
             })
         })
     }
