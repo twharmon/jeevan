@@ -3,7 +3,7 @@ import { IncomingMessage, ServerResponse } from 'http'
 import * as url from 'url'
 import Route, { HttpHandler, HttpMethod } from './route'
 import Context, { PathParams } from './context'
-import { HttpStatus } from './response'
+import { Response, HttpStatus, TextResponse } from './response'
 import { Logger } from './logger'
 import Middleware, { MiddlewareHandler } from './middleware'
 import * as WebSocket from 'ws'
@@ -19,6 +19,7 @@ export default class Engine {
         this.headRoutes = []
         this.getRoutes = []
         this.loggers = []
+        this.errorHandler = (msg: string) => new TextResponse(msg)
 
         this.server = http.createServer(async (req: IncomingMessage, res: ServerResponse) => {
             const u = url.parse(req.url || '')
@@ -62,7 +63,12 @@ export default class Engine {
                     let r = await routes[i].middlewares[j](ctx)
                     if (r) return r.send(res)
                 }
-                return (await routes[i].handler(ctx)).send(res)
+                try {
+                    var response = (await routes[i].handler(ctx))
+                } catch (err) {
+                    return this.errorHandler(JSON.stringify(err))
+                }
+                return response.send(res)
             }
             res.writeHead(HttpStatus.NotFound)
             res.end('Page not found')
@@ -76,6 +82,7 @@ export default class Engine {
     private deleteRoutes: Route[]
     private optionsRoutes: Route[]
     private headRoutes: Route[]
+    private errorHandler: (msg: string) => Response
     private readonly loggers: Logger[]
     private readonly server: http.Server
 
@@ -85,6 +92,10 @@ export default class Engine {
 
     middleware(...middlewares: MiddlewareHandler[]) {
         return new Middleware(this, ...middlewares)
+    }
+
+    onError(handler: (msg: string) => Response) {
+        this.errorHandler= handler
     }
 
     get(path: string, handler: HttpHandler) {
