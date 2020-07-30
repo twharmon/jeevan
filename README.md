@@ -12,7 +12,7 @@ app.get('/hello/{name}', async (ctx: Context) => {
 })
 
 app.post('/hello', async (ctx: Context) => {
-    const body = await ctx.body()
+    const body: { message: string } = await ctx.body()
     return new JSONResponse(body)
 })
 

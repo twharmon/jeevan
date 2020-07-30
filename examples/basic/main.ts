@@ -2,13 +2,8 @@ import { Context, Engine, JSONResponse } from '../../src/index'
 
 const app = new Engine()
 
-interface Person {
-    name: string
-    age: number
-}
-
 app.get('/', async ctx => {
-    const query: Person = ctx.query()
+    const query: { name: string, age: number } = ctx.query()
     return new JSONResponse(query)
 })
 
@@ -17,7 +12,7 @@ app.get('/hello/{name}', async ctx => {
 })
 
 app.post('/hello', async ctx => {
-    const body: Person = await ctx.body()
+    const body: { message: string } = await ctx.body()
     return new JSONResponse(body)
 })
 

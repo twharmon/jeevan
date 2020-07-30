@@ -9,9 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ws": "^7.2.1"
-  },
-  "devDependencies": {
+    "ws": "^7.2.1",
     "@types/node": "^13.7.0",
     "@types/ws": "^7.2.1"
   }
