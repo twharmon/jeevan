@@ -19,7 +19,7 @@ export default class Engine {
         this.headRoutes = []
         this.getRoutes = []
         this.loggers = []
-        this.errorHandler = (msg: string) => new TextResponse(msg)
+        this.errorHandler = () => new TextResponse('Internal Server Error')
 
         this.server = http.createServer(async (req: IncomingMessage, res: ServerResponse) => {
             const u = url.parse(req.url || '')
@@ -64,9 +64,10 @@ export default class Engine {
                     if (r) return r.send(res)
                 }
                 try {
-                    var response = (await routes[i].handler(ctx))
+                    var response = await routes[i].handler(ctx)
                 } catch (err) {
-                    return this.errorHandler(JSON.stringify(err))
+                    console.log(err)
+                    return this.errorHandler(err.message ?? err.toString()).send(res)
                 }
                 return response.send(res)
             }
