@@ -105,7 +105,7 @@ export class FileResponse {
 
 export class EmptyResponse {
     constructor(status = HttpStatus.OK) {
-        this.status= status
+        this.status = status
     }
 
     private readonly status: HttpStatus
