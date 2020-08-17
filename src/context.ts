@@ -2,6 +2,7 @@ import { IncomingMessage } from 'http'
 import * as url from 'url'
 import * as querystring from 'querystring'
 import { Logger, LogLevel } from './logger'
+import Cookies from './cookies'
 
 export type PathParams = { [key: string]: string }
 
@@ -10,10 +11,12 @@ export default class Context {
         this.request = request
         this.loggers = loggers
         this.params = params
+        this.cookies = new Cookies(request.headers.cookie)
     }
 
     readonly request: IncomingMessage
     readonly params: PathParams
+    readonly cookies: Cookies
     private readonly loggers: Logger[]
 
     query<T>(): T {
