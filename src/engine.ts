@@ -141,7 +141,7 @@ export default class Engine {
         return route
     }
 
-    logger(...logger: Logger[]) {
+    addLoggers(...logger: Logger[]) {
         this.loggers.push(...logger)
     }
 
