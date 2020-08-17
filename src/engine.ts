@@ -141,8 +141,8 @@ export default class Engine {
         return route
     }
 
-    logger(logger: Logger) {
-        this.loggers.push(logger)
+    logger(...logger: Logger[]) {
+        this.loggers.push(...logger)
     }
 
     ws(path: string) {
