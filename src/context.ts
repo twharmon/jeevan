@@ -10,12 +10,13 @@ export default class Context {
     constructor(request: IncomingMessage, loggers: Logger[], params: PathParams) {
         this.request = request
         this.loggers = loggers
-        this.params = params
+        this._params = params
         this.cookies = new Cookies(request.headers.cookie)
     }
 
     readonly request: IncomingMessage
-    readonly params: PathParams
+    private readonly _params: PathParams
+    private store: { [key: string]: any } = {}
     readonly cookies: Cookies
     private readonly loggers: Logger[]
 
@@ -32,6 +33,18 @@ export default class Context {
             query[keys[i]] = queryObj[keys[i]][0]
         }
         return query as T
+    }
+
+    set(key: string, val: any) {
+        this.store[key] = val
+    }
+
+    get<T>(key: string): T {
+        return this.store[key]
+    }
+
+    params() {
+        return this._params
     }
 
     body<T>(): Promise<T> {
